@@ -757,7 +757,7 @@ in each column $x$. Compute $W$ over the full width and plot vs $t$.""",
     )
 
     # -----------------------------------------------------------------------
-    st.markdown("---\n### Chapter XVIII — Directed Percolation")
+    st.markdown("---\n### Chapter XVI — Directed Percolation")
     # -----------------------------------------------------------------------
 
     _problem(

@@ -24,7 +24,7 @@ python -m src.cli chapter-12    # Chapter XII — The Transfer Matrix (port 8512
 python -m src.cli chapter-13    # Chapter XIII— CTRW (port 8513)
 python -m src.cli chapter-14    # Chapter XIV — Fractional Brownian Motion (port 8514)
 python -m src.cli chapter-15    # Chapter XV  — Distinguishing Anomalous Diffusion (port 8515)
-python -m src.cli chapter-18    # Chapter XVIII—Directed Percolation (port 8518)
+python -m src.cli chapter-16    # Chapter XVI — Directed Percolation (port 8516)
 ```
 
 ### Legacy app chapters (A–E)
@@ -407,7 +407,7 @@ achieves > 85% accuracy even when the MSD exponent is identical. Feature noise (
 
 ---
 
-## 18. Directed Percolation (Chapter XVIII)
+## 18. Directed Percolation (Chapter XVI)
 
 ### The DP process (1+1 dimensions)
 

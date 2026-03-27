@@ -57,7 +57,7 @@ python -m src.cli chapter-2     # port 8502
 | `chapter-13` | XIII | Continuous-Time Random Walks | 8513 |
 | `chapter-14` | XIV | Fractional Brownian Motion | 8514 |
 | `chapter-15` | XV | Distinguishing Anomalous Diffusion | 8515 |
-| `chapter-18` | XVIII | Directed Percolation | 8518 |
+| `chapter-16` | XVI | Directed Percolation | 8516 |
 
 All subcommands accept `--port N` and `--help`.
 
@@ -81,7 +81,7 @@ All subcommands accept `--port N` and `--help`.
 | XIII | Continuous-Time Random Walks | Pareto waiting times, temporal subdiffusion, non-Gaussian parameter |
 | XIV | Fractional Brownian Motion | Davies-Harte fGn, correlated increments, VACF signature |
 | XV | Distinguishing Anomalous Diffusion | 5-feature classifier: fractal vs CTRW vs fBm, ergodicity ratio |
-| XVIII | Directed Percolation | Time-directed bonds, DP universality class, ρ(t)~t^{-δ} at p_c |
+| XVI | Directed Percolation | Time-directed bonds, DP universality class, ρ(t)~t^{-δ} at p_c |
 | Problems | — | Coding challenges spanning all chapters |
 | Epilogue | — | The full arc: geometry → dynamics → criticality → universality |
 
@@ -145,7 +145,7 @@ random_geometry_and_criticality/
     │   ├── chapter_13.py # XIII— Continuous-Time Random Walks
     │   ├── chapter_14.py # XIV — Fractional Brownian Motion
     │   ├── chapter_15.py # XV  — Distinguishing Anomalous Diffusion
-    │   ├── chapter_18.py # XVIII—Directed Percolation
+    │   ├── chapter_16.py # XVI — Directed Percolation
     │   ├── problems.py
     │   └── epilogue.py
     ├── sim/

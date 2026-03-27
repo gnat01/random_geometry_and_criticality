@@ -148,8 +148,8 @@ def _parser() -> argparse.ArgumentParser:
     ch12 = sub.add_parser("chapter-12", help="Chapter XII — The Transfer Matrix")
     ch12.add_argument("--port", type=int, default=8512, help="Streamlit server port.")
 
-    ch18 = sub.add_parser("chapter-18", help="Chapter XVIII — Directed Percolation")
-    ch18.add_argument("--port", type=int, default=8518, help="Streamlit server port.")
+    ch16 = sub.add_parser("chapter-16", help="Chapter XVI — Directed Percolation")
+    ch16.add_argument("--port", type=int, default=8516, help="Streamlit server port.")
 
     bk = sub.add_parser("book", help="Interactive book: Random Geometry & Criticality")
     bk.add_argument("--port", type=int, default=8500, help="Streamlit server port (default: 8500).")
@@ -244,8 +244,8 @@ def main(argv: list[str] | None = None) -> int:
         env = {"BOOK_CHAPTER": "chapter_12"}
         return _run_streamlit(env, args.port, target=BOOK)
 
-    if args.command == "chapter-18":
-        env = {"BOOK_CHAPTER": "chapter_18"}
+    if args.command == "chapter-16":
+        env = {"BOOK_CHAPTER": "chapter_16"}
         return _run_streamlit(env, args.port, target=BOOK)
 
     if args.command == "book":
