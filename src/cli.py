@@ -10,17 +10,19 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 APP = ROOT / "src" / "app.py"
+BOOK = ROOT / "book.py"
 
 
-def _run_streamlit(env_updates: dict, port: int) -> int:
+def _run_streamlit(env_updates: dict, port: int, target: Path | None = None) -> int:
     env = os.environ.copy()
     env.update(env_updates)
+    script = str(target) if target is not None else str(APP)
     cmd = [
         sys.executable,
         "-m",
         "streamlit",
         "run",
-        str(APP),
+        script,
         f"--server.port={port}",
         "--browser.gatherUsageStats=false",
     ]
@@ -119,6 +121,39 @@ def _parser() -> argparse.ArgumentParser:
     e.add_argument("--seed", type=int, default=42, help="RNG seed.")
     e.add_argument("--port", type=int, default=8505, help="Streamlit server port.")
 
+    ch7 = sub.add_parser("chapter-7", help="Chapter VII — The Sound of a Fractal (spectral dimension)")
+    ch7.add_argument("--port", type=int, default=8507, help="Streamlit server port.")
+
+    ch8 = sub.add_parser("chapter-8", help="Chapter VIII — First-Passage Processes")
+    ch8.add_argument("--port", type=int, default=8508, help="Streamlit server port.")
+
+    ch13 = sub.add_parser("chapter-13", help="Chapter XIII — Continuous-Time Random Walks")
+    ch13.add_argument("--port", type=int, default=8513, help="Streamlit server port.")
+
+    ch14 = sub.add_parser("chapter-14", help="Chapter XIV — Fractional Brownian Motion")
+    ch14.add_argument("--port", type=int, default=8514, help="Streamlit server port.")
+
+    ch15 = sub.add_parser("chapter-15", help="Chapter XV — Distinguishing Anomalous Diffusion")
+    ch15.add_argument("--port", type=int, default=8515, help="Streamlit server port.")
+
+    ch9 = sub.add_parser("chapter-9", help="Chapter IX — Three-Dimensional Percolation")
+    ch9.add_argument("--port", type=int, default=8509, help="Streamlit server port.")
+
+    ch10 = sub.add_parser("chapter-10", help="Chapter X — The Ising Model")
+    ch10.add_argument("--port", type=int, default=8510, help="Streamlit server port.")
+
+    ch11 = sub.add_parser("chapter-11", help="Chapter XI — Why Universality Exists (RG)")
+    ch11.add_argument("--port", type=int, default=8511, help="Streamlit server port.")
+
+    ch12 = sub.add_parser("chapter-12", help="Chapter XII — The Transfer Matrix")
+    ch12.add_argument("--port", type=int, default=8512, help="Streamlit server port.")
+
+    ch18 = sub.add_parser("chapter-18", help="Chapter XVIII — Directed Percolation")
+    ch18.add_argument("--port", type=int, default=8518, help="Streamlit server port.")
+
+    bk = sub.add_parser("book", help="Interactive book: Random Geometry & Criticality")
+    bk.add_argument("--port", type=int, default=8500, help="Streamlit server port (default: 8500).")
+
     return p
 
 
@@ -172,6 +207,50 @@ def main(argv: list[str] | None = None) -> int:
             "FRACTAL_SEED": str(args.seed),
         }
         return _run_streamlit(env, args.port)
+
+    if args.command == "chapter-7":
+        env = {"BOOK_CHAPTER": "chapter_7"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-8":
+        env = {"BOOK_CHAPTER": "chapter_8"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-13":
+        env = {"BOOK_CHAPTER": "chapter_13"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-14":
+        env = {"BOOK_CHAPTER": "chapter_14"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-15":
+        env = {"BOOK_CHAPTER": "chapter_15"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-9":
+        env = {"BOOK_CHAPTER": "chapter_9"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-10":
+        env = {"BOOK_CHAPTER": "chapter_10"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-11":
+        env = {"BOOK_CHAPTER": "chapter_11"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-12":
+        env = {"BOOK_CHAPTER": "chapter_12"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "chapter-18":
+        env = {"BOOK_CHAPTER": "chapter_18"}
+        return _run_streamlit(env, args.port, target=BOOK)
+
+    if args.command == "book":
+        env = {"FRACTAL_CHAPTER": "BOOK"}
+        return _run_streamlit(env, args.port, target=BOOK)
 
     return 1
 

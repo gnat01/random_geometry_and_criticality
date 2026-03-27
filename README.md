@@ -60,6 +60,41 @@ All subcommands accept `--help`.
 
 ---
 
+## Part 3 — Interactive book (`book.py`)
+
+An integrated Streamlit book covering all chapters I–XV. The CLI can open the book at any chapter directly.
+
+### Launch the full book
+
+```bash
+python -m src.cli book           # opens at Prologue, port 8500
+```
+
+### Jump directly to a chapter
+
+```bash
+python -m src.cli chapter-7     # Chapter VII  — The Sound of a Fractal (port 8507)
+python -m src.cli chapter-8     # Chapter VIII — First-Passage Processes (port 8508)
+python -m src.cli chapter-13    # Chapter XIII — Continuous-Time Random Walks (port 8513)
+python -m src.cli chapter-14    # Chapter XIV  — Fractional Brownian Motion (port 8514)
+python -m src.cli chapter-15    # Chapter XV   — Distinguishing Anomalous Diffusion (port 8515)
+```
+
+All chapter subcommands accept `--port N` to override the default port.
+
+### Book chapter CLI reference
+
+| Subcommand | Chapter | Default port |
+|------------|---------|--------------|
+| `book` | Full book (opens at Prologue) | 8500 |
+| `chapter-7` | VII — The Sound of a Fractal | 8507 |
+| `chapter-8` | VIII — First-Passage Processes | 8508 |
+| `chapter-13` | XIII — Continuous-Time Random Walks | 8513 |
+| `chapter-14` | XIV — Fractional Brownian Motion | 8514 |
+| `chapter-15` | XV — Distinguishing Anomalous Diffusion | 8515 |
+
+---
+
 ### `chapter-a` flags
 
 | Flag | Meaning | Default |
