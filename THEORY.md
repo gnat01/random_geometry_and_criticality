@@ -1,6 +1,31 @@
 # Theory companion — random geometry, criticality, and anomalous diffusion
 
-This note supports the code under `src/`: **Chapter A** (geometry + walk modifiers), **Chapter B** (observables), **Chapter C** (supervised learning), **Chapter D** (DLA), and **Chapter E** (critical phenomena at the percolation transition).
+This note supports the code under `src/`: **Chapter A** (geometry + walk modifiers), **Chapter B** (observables), **Chapter C** (supervised learning), **Chapter D** (DLA), and **Chapter E** (critical phenomena at the percolation transition), plus the interactive book chapters **VII–XV**.
+
+## Running the code
+
+### Legacy app chapters (A–E)
+
+```bash
+python -m src.cli chapter-a    # geometry + SRW
+python -m src.cli chapter-b    # occupation / first passage / traps
+python -m src.cli chapter-c    # ML classifier
+python -m src.cli chapter-d    # DLA ensemble
+python -m src.cli chapter-e    # critical phenomena
+```
+
+### Interactive book
+
+```bash
+python -m src.cli book          # full book, opens at Prologue (port 8500)
+python -m src.cli chapter-7     # Chapter VII  — spectral dimension (port 8507)
+python -m src.cli chapter-8     # Chapter VIII — first-passage processes (port 8508)
+python -m src.cli chapter-13    # Chapter XIII — CTRW (port 8513)
+python -m src.cli chapter-14    # Chapter XIV  — fractional Brownian motion (port 8514)
+python -m src.cli chapter-15    # Chapter XV   — distinguishing anomalous diffusion (port 8515)
+```
+
+All subcommands accept `--port N` and `--help`.
 
 The unifying theme: **fractals are the geometry of criticality, and anomalous diffusion is the dynamics of fractals.** Deterministic fractals (carpet, Vicsek) are constructed by hand; random fractals emerge from the percolation phase transition (Chapter E) and from growth processes (DLA, Chapter D). In all cases, the absence of a characteristic length scale produces the same dynamical signature — a power-law MSD with exponent 2/d_w < 1.
 

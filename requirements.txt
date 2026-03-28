@@ -1,6 +1,20 @@
-streamlit>=1.28.0
-matplotlib>=3.7.0
-networkx>=3.0
+# Core numerics
 numpy>=1.24.0
+scipy>=1.10.0          # used indirectly by scikit-learn; good to pin explicitly
+
+# Graph construction and algorithms
+networkx>=3.0
+
+# Machine learning (Chapter C)
 scikit-learn>=1.3.0
-pandas>=2.0.0
+pandas>=2.0.0          # synthetic dataset display in Chapter C UI
+
+# Visualisation
+matplotlib>=3.7.0
+
+# Interactive app
+streamlit>=1.28.0
+
+# ── Optional but recommended ──────────────────────────────────────────────
+# Faster Streamlit file watching (avoids polling on macOS/Linux)
+watchdog>=3.0.0
