@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import streamlit as st
 
 from ..ml.synthetic import LABELS, SyntheticConfig, generate_labeled_batch, train_classifier
@@ -29,11 +30,12 @@ def render_chapter_c():
         noise = st.slider(
             "Measurement noise (feature uncertainty)",
             0.0,
-            1.5,
+            10.0,
             0.8,
             0.05,
         )
         test_frac = st.slider("Test fraction", 0.15, 0.4, 0.25)
+        preview_rows = st.slider("Preview rows", 30, 40, 35)
 
     cfg = SyntheticConfig(
         n_samples=n_samples,
@@ -57,6 +59,14 @@ def render_chapter_c():
             "Class counts: "
             + ", ".join(f"{LABELS[i]}={int(class_counts[i])}" for i in range(3))
         )
+
+        label_names = np.array([LABELS[int(k)] for k in y], dtype=object)
+        df = pd.DataFrame(X, columns=names)
+        df.insert(0, "label", label_names)
+        n_show = min(int(preview_rows), len(df))
+        sample_df = df.sample(n=n_show, random_state=int(seed)).reset_index(drop=True)
+        st.markdown("### Synthetic dataset preview")
+        st.dataframe(sample_df, use_container_width=True, hide_index=True)
 
         with st.spinner("Training RandomForest…"):
             out = train_classifier(X, y, names, test_size=float(test_frac), seed=int(seed))
