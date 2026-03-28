@@ -66,24 +66,6 @@ CHAPTERS = [
         "subtitle": "How long does it take a random walker to find its target?",
     },
     {
-        "id": "chapter_13",
-        "number": "XIII",
-        "title": "Continuous-Time Random Walks",
-        "subtitle": "Subdiffusion from temporal disorder",
-    },
-    {
-        "id": "chapter_14",
-        "number": "XIV",
-        "title": "Fractional Brownian Motion",
-        "subtitle": "Anomalous diffusion from correlated increments",
-    },
-    {
-        "id": "chapter_15",
-        "number": "XV",
-        "title": "Distinguishing Anomalous Diffusion",
-        "subtitle": "Three mechanisms, one MSD exponent",
-    },
-    {
         "id": "chapter_9",
         "number": "IX",
         "title": "Three-Dimensional Percolation",
@@ -108,8 +90,26 @@ CHAPTERS = [
         "subtitle": "Exact finite-strip solution and noise-free T_c extraction",
     },
     {
-        "id": "chapter_18",
-        "number": "XVIII",
+        "id": "chapter_13",
+        "number": "XIII",
+        "title": "Continuous-Time Random Walks",
+        "subtitle": "Subdiffusion from temporal disorder",
+    },
+    {
+        "id": "chapter_14",
+        "number": "XIV",
+        "title": "Fractional Brownian Motion",
+        "subtitle": "Anomalous diffusion from correlated increments",
+    },
+    {
+        "id": "chapter_15",
+        "number": "XV",
+        "title": "Distinguishing Anomalous Diffusion",
+        "subtitle": "Three mechanisms, one MSD exponent",
+    },
+    {
+        "id": "chapter_16",
+        "number": "XVI",
         "title": "Directed Percolation",
         "subtitle": "Time-directed connectivity and the DP universality class",
     },

@@ -1,4 +1,4 @@
-"""Chapter XVIII: Directed Percolation."""
+"""Chapter XVI: Directed Percolation."""
 
 from __future__ import annotations
 
@@ -19,9 +19,9 @@ _COLORS = ["#ff6b6b", "#a78bfa", "#4a9fd4", "#4caf50"]
 
 
 def render() -> None:
-    mark_visited("chapter_18")
+    mark_visited("chapter_16")
     chapter_header(
-        "XVIII",
+        "XVI",
         "Directed Percolation",
         "Time-directed connectivity, the DP universality class, and epidemic spreading",
     )
@@ -106,7 +106,7 @@ exponentially. Above $p_c$ it saturates to a finite value.
     )
 
     st.markdown("---")
-    prev_next("chapter_18")
+    prev_next("chapter_16")
 
 
 # ---------------------------------------------------------------------------
@@ -137,10 +137,10 @@ Watch how the active cluster spreads, contracts, or dies depending on p.
         with st.spinner("Running DP…"):
             activity = run_dp_spacetime(L_st, T_st, p_st, rng, seed_full=seed_full)
         st.session_state["ch18a_act"] = activity
-        st.session_state["ch18a_p"] = p_st
+        st.session_state["ch18a_p_val"] = p_st
         _show_a(activity, p_st)
     elif "ch18a_act" in st.session_state:
-        _show_a(st.session_state["ch18a_act"], st.session_state["ch18a_p"])
+        _show_a(st.session_state["ch18a_act"], st.session_state["ch18a_p_val"])
 
 
 def _show_a(activity: np.ndarray, p: float) -> None:

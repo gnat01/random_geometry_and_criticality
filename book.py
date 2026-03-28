@@ -28,7 +28,7 @@ st.set_page_config(
 
 from src.theme import apply_mpl_style
 from src.book.nav import init_session_state, render_sidebar, mark_visited
-from src.book import prologue, chapter_1, chapter_2, chapter_3, chapter_4, chapter_5, chapter_6, chapter_7, chapter_8, chapter_9, chapter_10, chapter_11, chapter_12, chapter_13, chapter_14, chapter_15, chapter_18, problems, epilogue
+from src.book import prologue, chapter_1, chapter_2, chapter_3, chapter_4, chapter_5, chapter_6, chapter_7, chapter_8, chapter_9, chapter_10, chapter_11, chapter_12, chapter_13, chapter_14, chapter_15, chapter_16, problems, epilogue
 
 apply_mpl_style()
 _start_chapter = os.environ.get("BOOK_CHAPTER", "prologue")
@@ -52,7 +52,7 @@ _ROUTES = {
     "chapter_10": chapter_10.render,
     "chapter_11": chapter_11.render,
     "chapter_12": chapter_12.render,
-    "chapter_18": chapter_18.render,
+    "chapter_16": chapter_16.render,
     "problems": problems.render,
     "epilogue": epilogue.render,
 }
