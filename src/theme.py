@@ -21,7 +21,7 @@ TEXT_C = "#dce1ec"
 
 def page_config():
     st.set_page_config(
-        page_title="Fractal walks · Chapters A–C",
+        page_title="Random geometry & criticality · Chapters A–E",
         layout="wide",
         initial_sidebar_state="expanded",
     )

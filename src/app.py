@@ -21,6 +21,8 @@ from src.theme import page_config, apply_mpl_style
 from src.ui.chapter_a import render_chapter_a
 from src.ui.chapter_b import render_chapter_b
 from src.ui.chapter_c import render_chapter_c
+from src.ui.chapter_d import render_chapter_d
+from src.ui.chapter_e import render_chapter_e
 
 page_config()
 apply_mpl_style()
@@ -30,5 +32,9 @@ if ch == "B":
     render_chapter_b()
 elif ch == "C":
     render_chapter_c()
+elif ch == "D":
+    render_chapter_d()
+elif ch == "E":
+    render_chapter_e()
 else:
     render_chapter_a()

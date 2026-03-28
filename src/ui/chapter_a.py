@@ -10,9 +10,15 @@ import numpy as np
 import streamlit as st
 
 from ..graphs.carpet import build_carpet
+from ..graphs.modifiers import add_levy_edges
 from ..graphs.percolation import build_percolation
 from ..graphs.vicsek import build_vicsek
-from ..sim.walks import batch_random_steps
+from ..sim.walks import (
+    batch_random_steps,
+    biased_batch_random_steps,
+    make_degree_bias,
+    make_gradient_bias,
+)
 from ..theme import (
     MSD_C,
     RMS_C,
@@ -203,7 +209,65 @@ def render_chapter_a():
             "Show heuristic anomalous scaling (literature d_w)", value=False
         )
 
-    G, pos, _side = _build_graph_cached(graph, depth, perc_size, float(p_open), int(seed))
+        st.markdown("### Walk modifiers")
+        _levy_alpha_default = float(_env_default("FRACTAL_LEVY_ALPHA", "0.0"))
+        levy_enabled = st.checkbox(
+            "Lévy long-range edges",
+            value=(_levy_alpha_default > 0),
+        )
+        levy_alpha = st.slider(
+            "Lévy α (tail exponent)",
+            0.3,
+            2.0,
+            float(_env_default("FRACTAL_LEVY_ALPHA", "1.5")),
+            0.05,
+            help="Smaller α → heavier tails / more long-range jumps. α ∈ (0,2) is the Lévy regime.",
+            disabled=not levy_enabled,
+        )
+        levy_p = st.slider(
+            "Lévy p_long (edge prob at d_nn)",
+            0.01,
+            0.30,
+            float(_env_default("FRACTAL_LEVY_P", "0.05")),
+            0.01,
+            help="Probability of adding a long-range edge at the nearest-neighbour length scale.",
+            disabled=not levy_enabled,
+        )
+
+        _bias_options = ("none", "toward-center", "away-center", "hub-seeking", "hub-avoiding")
+        _bias_default = _env_default("FRACTAL_BIAS", "none").lower()
+        if _bias_default not in _bias_options:
+            _bias_default = "none"
+        bias_preset = st.selectbox(
+            "Walk bias",
+            _bias_options,
+            index=_bias_options.index(_bias_default),
+            help=(
+                "none: uniform SRW. "
+                "toward/away-center: drift toward or away from graph centroid. "
+                "hub-seeking: prefer high-degree neighbours. "
+                "hub-avoiding: prefer low-degree neighbours."
+            ),
+        )
+        bias_strength = st.slider(
+            "Bias strength",
+            0.5,
+            6.0,
+            float(_env_default("FRACTAL_BIAS_STRENGTH", "3.0")),
+            0.5,
+            disabled=(bias_preset == "none"),
+        )
+
+    G_base, pos, _side = _build_graph_cached(graph, depth, perc_size, float(p_open), int(seed))
+
+    # Apply Lévy modifier if requested (not cached — depends on walk params)
+    if levy_enabled:
+        levy_rng = np.random.default_rng(int(seed) + 7919)
+        G, n_levy = add_levy_edges(G_base, pos, alpha=levy_alpha, p_long=levy_p, rng=levy_rng)
+    else:
+        G = G_base
+        n_levy = 0
+
     pos_w = pos_walk_square(list(G.nodes()))
     nodes = list(G.nodes())
     adj = {n: list(G.neighbors(n)) for n in nodes}
@@ -226,14 +290,30 @@ def render_chapter_a():
     with col2:
         stats_ph = st.empty()
 
+    levy_info = f" + {n_levy} Lévy edges (α={levy_alpha})" if levy_enabled and n_levy else ""
     fig0, ax0 = plt.subplots(figsize=(6, 5.5), facecolor=fig_bg())
     draw_graph_2d(G, pos, ax=ax0)
-    ax0.set_title(f"{graph} · {n_nodes} nodes", color=TEXT_C, fontsize=11)
+    ax0.set_title(f"{graph} · {n_nodes} nodes{levy_info}", color=TEXT_C, fontsize=11)
     fig0.tight_layout()
     gasket_ph.pyplot(fig0)
     plt.close(fig0)
 
+    # Build bias weight function
+    _weight_fn = None
+    if bias_preset != "none":
+        all_pos_vals = np.array(list(pos.values()), dtype=float)
+        centroid = all_pos_vals.mean(axis=0)
+        if bias_preset == "toward-center":
+            _weight_fn = make_gradient_bias(pos, centroid, strength=bias_strength, toward=True)
+        elif bias_preset == "away-center":
+            _weight_fn = make_gradient_bias(pos, centroid, strength=bias_strength, toward=False)
+        elif bias_preset == "hub-seeking":
+            _weight_fn = make_degree_bias(G, strength=bias_strength, hub_seeking=True)
+        elif bias_preset == "hub-avoiding":
+            _weight_fn = make_degree_bias(G, strength=bias_strength, hub_seeking=False)
+
     st.divider()
+    bias_label = "" if bias_preset == "none" else f"  ·  bias: {bias_preset} (γ={bias_strength})"
     if st.button("▶ Run walk", type="primary", key="run_a"):
         start = nodes[0]
         if (0, 0) in G:
@@ -247,7 +327,10 @@ def render_chapter_a():
         t0 = time.time()
         progress = st.progress(0.0, text="Walking…")
         for step in range(1, n_steps + 1):
-            walkers = batch_random_steps(G, walkers, rng)
+            if _weight_fn is not None:
+                walkers = biased_batch_random_steps(G, walkers, _weight_fn, rng)
+            else:
+                walkers = batch_random_steps(G, walkers, rng)
             vecs = np.array([np.asarray(pos_w[w], dtype=float) - p0 for w in walkers])
             sq = np.sum(vecs**2, axis=1)
             rms_hist.append(float(np.sqrt(np.mean(sq))))
@@ -267,4 +350,5 @@ def render_chapter_a():
         progress.empty()
         st.success(
             f"Done — {n_steps} steps, {n_walkers} walkers, {time.time() - t0:.1f}s"
+            f"{bias_label}"
         )
