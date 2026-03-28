@@ -1,11 +1,8 @@
-# Random geometry and criticality
+# Random Geometry and Criticality
 
-This repository contains:
+> *"How does diffusion look when space is fractal, disordered, or poised at a phase transition?"*
 
-1. **`fractal_walk.py`** — Streamlit demo of many walkers on a **generalized Sierpiński gasket** (triangle lattice), with RMS / MSD scaling plots.
-2. **`src/`** — A five-chapter lab (**geometry → observables → ML → DLA → critical phenomena**) with a **CLI** and Streamlit UI. See **`THEORY.md`** for the mathematical background.
-
-<p align="center"><em>"How does diffusion look when space is fractal, disordered, or poised at a phase transition?"</em></p>
+An interactive Streamlit physics book covering fractal geometry, random walks, critical phenomena, and anomalous diffusion — from first principles to machine learning. See **`THEORY.md`** for the full mathematical background.
 
 ---
 
@@ -18,184 +15,101 @@ source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Dependencies: **Streamlit**, **Matplotlib**, **NetworkX**, **NumPy**, **scikit-learn** (Chapter C).
+Dependencies: **Streamlit**, **Matplotlib**, **NetworkX**, **NumPy**, **SciPy**, **scikit-learn**.
 
 ---
 
-## Part 1 — Original gasket app
+## The Interactive Book
+
+An integrated Streamlit book (`book.py`) covering all chapters. Each chapter is a self-contained interactive experiment — run sliders, click buttons, see physics.
+
+### Launch the full book
+
+```bash
+python -m src.cli book          # opens at Prologue, port 8500
+```
+
+### Jump directly to any chapter
+
+```bash
+python -m src.cli chapter-1     # port 8501 (overrides available via --port N)
+python -m src.cli chapter-2     # port 8502
+# ... etc.
+```
+
+### Full chapter CLI reference
+
+| Subcommand | Chapter | Topic | Port |
+|------------|---------|-------|------|
+| `book` | — | Full book (opens at Prologue) | 8500 |
+| `chapter-1` | I | The Geometry of Fractals | 8501 |
+| `chapter-2` | II | Walking on a Fractal | 8502 |
+| `chapter-3` | III | Disorder and the Random Substrate | 8503 |
+| `chapter-4` | IV | The Critical Point | 8504 |
+| `chapter-5` | V | Growth as Fractal (DLA) | 8505 |
+| `chapter-6` | VI | The Inverse Problem (ML) | 8506 |
+| `chapter-7` | VII | The Sound of a Fractal | 8507 |
+| `chapter-8` | VIII | First-Passage Processes | 8508 |
+| `chapter-9` | IX | Three-Dimensional Percolation | 8509 |
+| `chapter-10` | X | The Ising Model | 8510 |
+| `chapter-11` | XI | Why Universality Exists (RG) | 8511 |
+| `chapter-12` | XII | The Transfer Matrix | 8512 |
+| `chapter-13` | XIII | Continuous-Time Random Walks | 8513 |
+| `chapter-14` | XIV | Fractional Brownian Motion | 8514 |
+| `chapter-15` | XV | Distinguishing Anomalous Diffusion | 8515 |
+| `chapter-18` | XVIII | Directed Percolation | 8518 |
+
+All subcommands accept `--port N` and `--help`.
+
+### Book contents
+
+| # | Chapter | What you explore |
+|---|---------|-----------------|
+| Prologue | — | The central question: geometry → dynamics |
+| I | The Geometry of Fractals | Sierpiński carpet, Vicsek fractal, Hausdorff dimension, self-similarity |
+| II | Walking on a Fractal | Anomalous diffusion, MSD ~ t^α, measuring d_w empirically |
+| III | Disorder and the Random Substrate | Bond percolation, giant component, fractal structure near p_c |
+| IV | The Critical Point | Exact 2-D exponents (ν=4/3, β=5/36), finite-size scaling collapse |
+| V | Growth as Fractal | DLA on percolation substrates, R_g scaling, fractal dimension from growth |
+| VI | The Inverse Problem | Random forest classifies geometry family from walk statistics |
+| VII | The Sound of a Fractal | Laplacian spectrum, density of states, spectral dimension d_s |
+| VIII | First-Passage Processes | Survival function S(t), mean FPT, fractal vs 2-D grid comparison |
+| IX | Three-Dimensional Percolation | p_c≈0.2488, numerical exponents, FSS with 3-D ν, LCC visualisation |
+| X | The Ising Model | Wolff cluster algorithm, M/χ/Binder cumulant, exact exponents, FSS |
+| XI | Why Universality Exists | RG cobweb f(p)=3p²−2p³, fixed points, ν from f'(p*) |
+| XII | The Transfer Matrix | Exact strip ξ(T), ξ/W crossing → T_c, noise-free critical point extraction |
+| XIII | Continuous-Time Random Walks | Pareto waiting times, temporal subdiffusion, non-Gaussian parameter |
+| XIV | Fractional Brownian Motion | Davies-Harte fGn, correlated increments, VACF signature |
+| XV | Distinguishing Anomalous Diffusion | 5-feature classifier: fractal vs CTRW vs fBm, ergodicity ratio |
+| XVIII | Directed Percolation | Time-directed bonds, DP universality class, ρ(t)~t^{-δ} at p_c |
+| Problems | — | Coding challenges spanning all chapters |
+| Epilogue | — | The full arc: geometry → dynamics → criticality → universality |
+
+---
+
+## Legacy App (Chapters A–E)
+
+The original five-chapter lab (`src/app.py`) is still available for direct access to the underlying simulations with more CLI control:
+
+```bash
+python -m src.cli chapter-a    # geometry + SRW + Lévy edges + biased walks
+python -m src.cli chapter-b    # occupation, first passage, traps
+python -m src.cli chapter-c    # ML classifier on synthetic data
+python -m src.cli chapter-d    # DLA ensemble + R_g scaling
+python -m src.cli chapter-e    # critical phenomena: P∞, n_s, FSS collapse
+```
+
+See `THEORY.md` §1–8 for the mathematical background of all legacy chapters.
+
+---
+
+## Legacy Gasket App
 
 ```bash
 streamlit run fractal_walk.py
 ```
 
-Adjust recursion depth, `n_kept`, walkers, and steps in the sidebar; click **Run Walk**.
-
----
-
-## Part 2 — Chapters A → B → C → D (`src/`)
-
-All chapters share **`src/app.py`**. The CLI sets `FRACTAL_*` environment variables and starts Streamlit on a chosen port.
-
-### Overview
-
-| Chapter | Focus | CLI subcommand | Default port |
-|---------|-------|----------------|--------------|
-| **A** | **Geometry** — carpet, Vicsek, or bond percolation + SRW / RMS / MSD; optional Lévy long-range edges and biased walk presets | `chapter-a` | 8501 |
-| **B** | **Observables** — occupation vs π, first-passage times, traps & survival | `chapter-b` | 8502 |
-| **C** | **ML** — synthetic dataset from random graphs + short walks; RandomForest classifier | `chapter-c` | 8503 |
-| **D** | **DLA** — diffusion-limited aggregation on bond-percolation substrates; ensemble R_g scaling & honest finite-size analysis | `chapter-d` | 8504 |
-| **E** | **Critical phenomena** — order parameter, susceptibility, cluster-size distribution, finite-size collapse, survival power law, anomalous diffusion exponent vs p | `chapter-e` | 8505 |
-
-### Launch via CLI (recommended)
-
-```bash
-python -m src.cli chapter-a --graph carpet --depth 4
-python -m src.cli chapter-b --mode occupation
-python -m src.cli chapter-c
-python -m src.cli chapter-d --perc-size 45 --dla-runs 20
-python -m src.cli chapter-e --mode order_parameter
-```
-
-All subcommands accept `--help`.
-
----
-
-## Part 3 — Interactive book (`book.py`)
-
-An integrated Streamlit book covering all chapters I–XV. The CLI can open the book at any chapter directly.
-
-### Launch the full book
-
-```bash
-python -m src.cli book           # opens at Prologue, port 8500
-```
-
-### Jump directly to a chapter
-
-```bash
-python -m src.cli chapter-7     # Chapter VII  — The Sound of a Fractal (port 8507)
-python -m src.cli chapter-8     # Chapter VIII — First-Passage Processes (port 8508)
-python -m src.cli chapter-13    # Chapter XIII — Continuous-Time Random Walks (port 8513)
-python -m src.cli chapter-14    # Chapter XIV  — Fractional Brownian Motion (port 8514)
-python -m src.cli chapter-15    # Chapter XV   — Distinguishing Anomalous Diffusion (port 8515)
-```
-
-All chapter subcommands accept `--port N` to override the default port.
-
-### Book chapter CLI reference
-
-| Subcommand | Chapter | Default port |
-|------------|---------|--------------|
-| `book` | Full book (opens at Prologue) | 8500 |
-| `chapter-7` | VII — The Sound of a Fractal | 8507 |
-| `chapter-8` | VIII — First-Passage Processes | 8508 |
-| `chapter-13` | XIII — Continuous-Time Random Walks | 8513 |
-| `chapter-14` | XIV — Fractional Brownian Motion | 8514 |
-| `chapter-15` | XV — Distinguishing Anomalous Diffusion | 8515 |
-
----
-
-### `chapter-a` flags
-
-| Flag | Meaning | Default |
-|------|---------|---------|
-| `--graph {carpet,vicsek,percolation}` | Graph family | `carpet` |
-| `--depth N` | Ternary recursion depth (carpet / Vicsek) | `4` |
-| `--perc-size N` | Grid side L for percolation | `24` |
-| `--p-open F` | Bond open probability p for percolation | `0.55` |
-| `--seed N` | RNG seed for the percolation instance | `42` |
-| `--levy-alpha F` | Lévy exponent α ∈ (0, 2). Set > 0 to add long-range edges. 0 = disabled | `0.0` |
-| `--levy-p F` | Edge probability at the nearest-neighbour length scale | `0.05` |
-| `--bias {none,toward-center,away-center,hub-seeking,hub-avoiding}` | Walk bias preset | `none` |
-| `--bias-strength F` | Strength parameter for the bias | `3.0` |
-| `--port N` | Streamlit port | `8501` |
-
-**Walk modifier details**
-
-*Lévy long-range edges* — for each pair of nodes (u, v) not already connected, an edge is added with probability `p_long * (d_nn / d(u,v))^(α+2)`, where `d_nn` is the median existing edge length. This makes the augmented graph support Lévy-flight statistics: the probability that a SRW step covers distance > r decays as `r^{−α}`. The graph preview updates the title to show how many Lévy edges were added.
-
-*Bias presets* — replace uniform neighbour selection with a weighted draw:
-
-| Preset | Weight function |
-|--------|----------------|
-| `toward-center` | exp(+γ · normalised progress toward graph centroid) |
-| `away-center` | exp(−γ · normalised progress toward graph centroid) |
-| `hub-seeking` | deg(neighbour)^γ |
-| `hub-avoiding` | deg(neighbour)^{−γ} |
-
-Both Lévy edges and a bias preset can be active simultaneously.
-
----
-
-### `chapter-b` flags
-
-| Flag | Meaning | Default |
-|------|---------|---------|
-| `--mode {occupation,first_passage,traps}` | Which observable suite to open on | `occupation` |
-| `--port N` | Streamlit port | `8502` |
-
----
-
-### `chapter-c` flags
-
-| Flag | Meaning | Default |
-|------|---------|---------|
-| `--port N` | Streamlit port | `8503` |
-
-In the app choose dataset size, seeds, walk length, noise level, and test fraction, then **Generate & train**.
-
----
-
-### `chapter-d` flags
-
-| Flag | Meaning | Default |
-|------|---------|---------|
-| `--perc-size N` | Percolation grid side (larger = more finite-size room) | `45` |
-| `--p-open F` | Bond open probability | `0.55` |
-| `--seed N` | Substrate RNG seed | `42` |
-| `--dla-runs N` | Number of independent DLA realisations in the ensemble | `20` |
-| `--dla-max-frac F` | Stop each cluster when it reaches this fraction of substrate nodes | `0.15` |
-| `--port N` | Streamlit port | `8504` |
-
-**Why percolation only?** DLA on the recursive fractals (carpet, Vicsek) would terminate quickly because the substrates are small at any tractable depth. Percolation grids can be made arbitrarily large, giving a genuine decade of scaling range before finite-size saturation sets in.
-
-**What the ensemble plot shows**
-
-- Faint lines: individual R_g(M) realisations
-- Solid line + band: ensemble mean ± 1σ
-- Dashed fit line: slope = 1/d_f, annotated with d_f and R²
-- Vertical dotted lines: fit window boundaries, with explicit labels marking the small-cluster-noise region (left) and finite-size-saturation region (right)
-
-The fit window is chosen automatically: the lower boundary is 5 % of max cluster mass; the upper boundary is detected from the inflection of the smoothed R_g curve where growth slows to < 20 % of its early-phase rate, capped at 60 % of max mass.
-
-### `chapter-e` flags
-
-| Flag | Meaning | Default |
-|------|---------|---------|
-| `--mode {order_parameter,cluster_geometry,finite_size_collapse,critical_dynamics}` | Observable mode to open on | `order_parameter` |
-| `--perc-size N` | L for dynamics modes (sweep modes use L = 15, 25, 35 internally) | `28` |
-| `--n-samples N` | Percolation samples per (L, p) point | `30` |
-| `--seed N` | RNG seed | `42` |
-| `--port N` | Streamlit port | `8505` |
-
-**Modes**
-
-| Mode | What it shows |
-|------|--------------|
-| `order_parameter` | P_∞(p) and susceptibility S(p) for L = 15, 25, 35; transition sharpens with L |
-| `cluster_geometry` | Log-binned n_s at user-chosen p values; power law n_s ~ s^{−τ} visible at p_c |
-| `finite_size_collapse` | Rescaled P_∞ · L^{β/ν} vs (p − p_c) · L^{1/ν}; all L collapse onto one curve |
-| `critical_dynamics` | Survival S(t) on log-linear and log-log axes (exponential vs power-law); MSD exponent β vs p |
-
-**Exact 2D bond-percolation exponents used**
-
-| Symbol | Value | Meaning |
-|--------|-------|---------|
-| p_c | 1/2 (exact) | Critical threshold (Hammersley self-duality) |
-| ν | 4/3 (exact) | Correlation-length exponent |
-| β | 5/36 (exact) | Order-parameter exponent |
-| τ | 187/91 ≈ 2.05 (exact) | Fisher exponent for n_s ~ s^{−τ} |
-| d_w | ≈ 2.87 (numerical) | Walk dimension at p_c |
+Generalized Sierpiński gasket (triangle lattice) with adjustable recursion depth and walk parameters.
 
 ---
 
@@ -203,44 +117,72 @@ The fit window is chosen automatically: the lower boundary is 5 % of max cluster
 
 ```
 random_geometry_and_criticality/
-├── fractal_walk.py       # Legacy triangular gasket Streamlit app
+├── book.py               # Interactive book entry point
+├── fractal_walk.py       # Legacy triangular gasket app
 ├── requirements.txt
 ├── README.md
-├── THEORY.md             # Mathematical background for all chapters
+├── THEORY.md             # Mathematical background (all chapters)
+├── EXTENSIONS.md         # Extension ideas and architecture notes
 └── src/
-    ├── app.py            # Streamlit entry (reads FRACTAL_CHAPTER env var)
-    ├── cli.py            # argparse launcher for all four chapters
-    ├── theme.py          # Shared dark-theme plot styling
-    ├── graphs/
-    │   ├── carpet.py     # Sierpiński carpet builder
-    │   ├── vicsek.py     # Vicsek cross fractal builder
-    │   ├── percolation.py# Bond percolation builder
-    │   ├── modifiers.py  # add_levy_edges — post-build graph modifier
-    │   └── common.py     # Shared helpers (LCC, positions, mean degree)
+    ├── cli.py            # argparse launcher (book + all chapter-N subcommands)
+    ├── theme.py          # Shared dark-theme constants
+    ├── app.py            # Legacy app entry (reads FRACTAL_CHAPTER env var)
+    ├── book/
+    │   ├── nav.py        # Chapter registry, sidebar, header/callout helpers
+    │   ├── prologue.py
+    │   ├── chapter_1.py  # I   — Geometry of Fractals
+    │   ├── chapter_2.py  # II  — Walking on a Fractal
+    │   ├── chapter_3.py  # III — Disorder and Random Substrate
+    │   ├── chapter_4.py  # IV  — The Critical Point
+    │   ├── chapter_5.py  # V   — Growth as Fractal
+    │   ├── chapter_6.py  # VI  — The Inverse Problem
+    │   ├── chapter_7.py  # VII — The Sound of a Fractal
+    │   ├── chapter_8.py  # VIII— First-Passage Processes
+    │   ├── chapter_9.py  # IX  — 3-D Percolation
+    │   ├── chapter_10.py # X   — The Ising Model
+    │   ├── chapter_11.py # XI  — Why Universality Exists
+    │   ├── chapter_12.py # XII — The Transfer Matrix
+    │   ├── chapter_13.py # XIII— Continuous-Time Random Walks
+    │   ├── chapter_14.py # XIV — Fractional Brownian Motion
+    │   ├── chapter_15.py # XV  — Distinguishing Anomalous Diffusion
+    │   ├── chapter_18.py # XVIII—Directed Percolation
+    │   ├── problems.py
+    │   └── epilogue.py
     ├── sim/
-    │   ├── walks.py      # SRW + biased walk primitives + preset factories
-    │   ├── observables.py# Occupation, first passage, traps, MSD/RMS series
-    │   ├── dla.py        # DLA growth, ensemble, fit-in-window analysis
-    │   └── criticality.py# P_∞, n_s, FSS collapse, survival, MSD exponent vs p
+    │   ├── walks.py          # SRW + biased walk primitives
+    │   ├── observables.py    # Occupation, first passage, traps, MSD/RMS
+    │   ├── dla.py            # DLA growth, ensemble, fit-in-window analysis
+    │   ├── criticality.py    # P∞, n_s, FSS collapse, survival, MSD exponent vs p
+    │   ├── spectral.py       # Laplacian eigenvalues, return probability
+    │   ├── firstpassage.py   # First-passage times, survival function
+    │   ├── ctrw.py           # CTRW positions at clock times
+    │   ├── fbm.py            # 2-D fBm via Davies-Harte
+    │   ├── anomalous.py      # Feature extraction + classifier (Ch. XV)
+    │   ├── percolation3d.py  # Cubic-lattice bond percolation, FSS, LCC
+    │   ├── ising.py          # Wolff cluster algorithm, temperature scan
+    │   ├── transfermatrix.py # Ising strip transfer matrix, ξ from eigenvalues
+    │   └── directed_perc.py  # 1+1-D directed bond percolation
+    ├── graphs/
+    │   ├── carpet.py         # Sierpiński carpet builder
+    │   ├── vicsek.py         # Vicsek cross fractal builder
+    │   ├── percolation.py    # 2-D bond percolation builder
+    │   ├── modifiers.py      # add_levy_edges
+    │   └── common.py         # LCC, positions, mean degree helpers
     ├── ml/
-    │   └── synthetic.py  # Synthetic dataset generation + RandomForest (Ch. C)
+    │   └── synthetic.py      # Synthetic dataset + RandomForest (legacy Ch. C)
     └── ui/
-        ├── chapter_a.py  # Geometry + SRW + Lévy + bias controls
-        ├── chapter_b.py  # Occupation / first passage / traps
-        ├── chapter_c.py  # ML classifier UI
-        ├── chapter_d.py  # DLA ensemble UI
-        ├── chapter_e.py  # Critical phenomena UI (4 modes)
-        └── plotting.py   # draw_graph_2d, pos_walk_square
+        ├── chapter_a.py  through chapter_e.py   # Legacy UI panels
+        └── plotting.py
 ```
 
 ---
 
 ## Notes
 
-- **Performance:** Large depths (carpet/Vicsek ≥ 4) or dense percolation grids slow down the graph draw. For DLA, grid sizes ≥ 60 are recommended for more than one decade of scaling range but will take longer per ensemble run.
-- **Lévy edges on large grids:** `add_levy_edges` is O(N²) in node count. It is fine for all graph sizes used in the app (< ~3 000 nodes) but will be noticeably slow on percolation grids larger than ~50×50.
-- **Chapter C** is intentionally a **pedagogical** pipeline — see `THEORY.md` §5 for identifiability and shortcut-feature caveats.
-- **Chapter D** displays honest finite-size warnings on the plot and in the summary line. A low R² (< 0.90) triggers an additional warning suggesting a larger substrate.
+- **Performance:** 3-D percolation and Ising temperature scans can be slow for large L — the defaults are tuned for interactive speed. Increase sizes for better statistics.
+- **Transfer matrix:** grows as 2^W × 2^W; W ≤ 6 is fast, W = 7–8 takes a few seconds.
+- **Chapter XV noise slider:** set to 0 for clean features (100% accuracy), ~0.5 for realistic measurement noise, 1.0+ for stress-testing the classifier.
+- **Lévy edges** (legacy Chapter A) are O(N²) — fine for all graph sizes in the app but slow on grids > 50×50.
 
 ---
 
